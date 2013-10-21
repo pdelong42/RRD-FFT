@@ -39,7 +39,7 @@ do.
 
 Dependencies:
 
- - RRDtool
- - FFTW library
+ - [RRDtool](http://www.rrdtool.org)
+ - [FFTW library](http://www.fftw.org)
  - a C compiler (GCC, LLVM, ...)
  - Bourne Shell and Perl interpreters (but hopefully not for much longer)
