@@ -36,3 +36,10 @@ features that RRDtool has built-in to it.  But there are problems with that,
 mainly having to do with the way RRAs work.  To make it work that way would
 involve major changes to the way RRDtool works, which I'm not sure I want to
 do.
+
+Dependencies:
+
+ - RRDtool
+ - FFTW library
+ - a C compiler (GCC, LLVM, ...)
+ - Bourne Shell and Perl interpreters (but hopefully not for much longer)
