@@ -17,3 +17,7 @@ I've put this here in an attempt to publicly shame myself into putting more
 time into this project.  It's possible someone else has also done this, but I
 haven't yet done a decent search to see if that's the case.  And while I should
 do that, this exercise is partly for the sake of the learning process.
+
+ToDo:
+ - Write some useful documentation explaining what each part is for.
+ - Make this more useful and usable beyond the proof-of-concept phase.
