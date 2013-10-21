@@ -21,3 +21,18 @@ do that, this exercise is partly for the sake of the learning process.
 ToDo:
  - Write some useful documentation explaining what each part is for.
  - Make this more useful and usable beyond the proof-of-concept phase.
+
+Idea scratchpad:
+
+ - For now, the most flexibility I envision for this is the ability to select
+which RRA to perform the FFT on.  I suppose I could allow for the specification
+of time ranges to operate on or what frequency ranges to output, but I haven't
+yet put enough thought into it to what form that would take.
+
+ - In my initial thoughts on this idea, I had planned to simply extract the RRD
+data, transform it with an FFT, and stuff the new data into a new RRD file (or
+a new RRA in the same RRD), so that I could leverage the existing graphing
+features that RRDtool has built-in to it.  But there are problems with that,
+mainly having to do with the way RRAs work.  To make it work that way would
+involve major changes to the way RRDtool works, which I'm not sure I want to
+do.
