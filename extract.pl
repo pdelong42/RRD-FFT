@@ -24,7 +24,7 @@ sub cartesian_product { # footnote 1 #
    } [[]], @ARG;
 }
 
-my $hand;
+my $handIn;
 my $filename;
 my $depth = 0;
 
@@ -35,34 +35,58 @@ GetOptions(
    "filename=s" => \$filename,
 ) or die "getopts error";
 
-open $hand, "/usr/bin/rrdtool dump $filename |"
+open $handIn, "/usr/bin/rrdtool dump $filename |"
    or die "could not rrddump $filename - aborting\n";
 
 $Data::Dumper::Indent = 1;
 $Data::Dumper::Maxdepth = $depth;
 
-my $xml = readline $hand;
+my $xml = readline $handIn;
 my $ref = XMLin $xml, ForceArray => 1;
 
-my $dslist = [
-   map {
-      @{ $ARG->{ name } }
-   }  @{ $ref->{ ds   } }
-];
+my @dslist = map {
+   @{ $ARG->{ name } }
+}  @{ $ref->{ ds   } };
 
 foreach( @{ $ref->{ rra } } ) {
 
    foreach( @{ cartesian_product( $ARG->{ database }, $ARG->{ pdp_per_row }, $ARG->{ cf } ) } ) {
 
+      my @handOuts;
       my $database = shift @$ARG;
       my $label = sprintf 'rra:steps=%s,cf=%s', @$ARG;
 
       $label =~ s{ \s+ }{}gx;
 
-      print "$label\n";
-      print "@$dslist\n";
-      print( join( ' ', @{ $ARG->{ v } } ), "\n" )
-         foreach @{ $database->{ row } };
+      foreach( @dslist ) {
+
+         s{ \s+ }{}gx;
+
+         my $hand;
+         my $filename = "${label},ds=${ARG}.out";
+
+         if( open $hand, ">${filename}" ) {
+            push @handOuts, $hand;
+         } else {
+            push @handOuts, undef;
+            warn "unable to open $filename for writing - skipping";
+         }
+      }
+
+      foreach my $row ( @{ $database->{ row } } ) {
+
+         foreach( @handOuts ) {
+
+            my $col = shift @{ $row->{ v } };
+            next unless defined;
+            print $ARG "$col\n";
+         }
+      }
+
+      foreach( @handOuts ) {
+         close $ARG
+            or warn "unable to close $ARG\n";
+      }
    }
 }
 
