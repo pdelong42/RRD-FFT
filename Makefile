@@ -1,7 +1,13 @@
-default: test
+default: test dft dht
+
+dht: dht.c
+	cc -o dht dht.c -lfftw3 -I/opt/local/include -L/opt/local/lib
+
+dft: dft.c
+	cc -o dft dft.c -lfftw3 -I/opt/local/include -L/opt/local/lib
 
 test: test.c
-	cc -std=gnu99 -o test test.c -lfftw3 -lm -I/opt/local/include -L/opt/local/lib
+	cc -o test test.c -lfftw3 -I/opt/local/include -L/opt/local/lib
 
 clean:
-	rm -f test
+	rm -f test dft dht
