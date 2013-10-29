@@ -48,6 +48,9 @@ my @dslist = map {
    @{ $ARG->{ name } }
 }  @{ $ref->{ ds   } };
 
+s{ \s+ }{}gx
+   foreach @dslist;
+
 foreach( @{ $ref->{ rra } } ) {
 
    foreach( @{ cartesian_product( $ARG->{ database }, $ARG->{ pdp_per_row }, $ARG->{ cf } ) } ) { # footnote 3 #
@@ -60,8 +63,6 @@ foreach( @{ $ref->{ rra } } ) {
       $label =~ s{ \s+ }{}gx;
 
       foreach( @dslist ) {
-
-         s{ \s+ }{}gx;
 
          my $hand;
          my $filename = "${label},ds=${ARG}.out";
