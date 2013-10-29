@@ -30,7 +30,7 @@ int main() {
       double mod = sqrt( re * re + im * im );
       double arg = atan( im / re );
 
-      if( sign > 0 ) {
+      if( sign > 0 ) { /* footnote 1 */
          re  /= n;
          im  /= n;
          mod /= n;
@@ -44,3 +44,11 @@ int main() {
    fftw_free( in  );
    fftw_free( out );
 }
+
+/*
+ * Footnote 1:
+ *
+ * This should scale by 1/sqrt(n), not by 1/n; and it should do it in both
+ * directions - that is, it should not be conditional on sign > 0.
+ *
+ */
