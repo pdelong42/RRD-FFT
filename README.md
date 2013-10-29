@@ -21,6 +21,8 @@ do that, this exercise is partly for the sake of the learning process.
 ToDo:
  - Write some useful documentation explaining what each part is for.
  - Make this more useful and usable beyond the proof-of-concept phase.
+ - Figure-out how to handle NANs - it takes only one for an FFT to be useless.
+ - Handle COUNTER and DERIVE types, not just GAUGE and ABSOLUTE.
 
 Idea scratchpad:
 
