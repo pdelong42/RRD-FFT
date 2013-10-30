@@ -39,6 +39,9 @@ mainly having to do with the way RRAs work.  To make it work that way would
 involve major changes to the way RRDtool works, which I'm not sure I want to
 do.
 
+ - In the far future, could this possibly be tacked-onto RRDtool as another
+kind of consolidation function?
+
 Dependencies:
 
  - [RRDtool](http://www.rrdtool.org)

@@ -7,7 +7,8 @@ int main() {
    int n, i, sign;
    double sqrtn;
 
-   scanf( "%20i %20i", &n, &sign );
+   scanf( "%20i", &n    );
+   scanf( "%20i", &sign );
 
    double *in  = fftw_malloc( n * sizeof( double ) );
    double *out = fftw_malloc( n * sizeof( double ) );

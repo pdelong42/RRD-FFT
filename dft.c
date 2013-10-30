@@ -4,11 +4,11 @@
 
 int main() {
 
-   size_t n;
-   int i, sign;
+   int n, i, sign;
    double sqrtn;
 
-   scanf( "%20i %20i", &n, &sign );
+   scanf( "%20i", &n    );
+   scanf( "%20i", &sign );
 
    fftw_complex *in  = fftw_malloc( n * sizeof( fftw_complex ) );
    fftw_complex *out = fftw_malloc( n * sizeof( fftw_complex ) );
@@ -24,7 +24,7 @@ int main() {
    sign *= -1;
    sqrtn = sqrt( n );
 
-   printf( "%i %i\n", n, sign );
+   printf( "%i\n%i\n", n, sign );
 
    for( i = 0 ; i < n ; i++ ) {
 
