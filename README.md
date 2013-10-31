@@ -40,7 +40,9 @@ involve major changes to the way RRDtool works, which I'm not sure I want to
 do.
 
  - In the far future, could this possibly be tacked-onto RRDtool as another
-kind of consolidation function?
+kind of consolidation function?  Or should it instead only be done at graphing
+time (you don't necessarily want to incur the overhead of an FFT every time a
+CF gets run, which is presumably every time there is an update to the RRD).
 
 Dependencies:
 
