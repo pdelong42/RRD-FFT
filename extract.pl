@@ -2,12 +2,12 @@
 
 =pod
 
-In an attempt to make the C code as simple as possible, and not too closely
-tied to any particular workflow, I've written this script to extract the data
-from an RRD file, and print the output to several separate flat text files.
-Each output file is a simple list containing the data extracted from a distinct
-RRA within the original RRD file - there is a one-to-one correspondence between
-output files and RRAs.
+In an attempt to make the C code as focused and single-purpose as possible, and
+not too closely tied to any particular workflow, I've written this script to
+extract the data from an RRD file, and print the output to several separate
+flat text files.  Each output file is a simple list containing the data
+extracted from a distinct RRA within the original RRD file - there is a
+one-to-one correspondence between output files and RRAs.
 
 Each output file contains one field per line: the first line is a positive
 integer representing a count of the number of data points, the second line is
@@ -55,24 +55,28 @@ sub cartesian_product { # footnote 1 #
 }
 
 my $handIn;
-my $filename;
+my $inputfile;
 my $depth = 0;
 
 local $/;
 
 GetOptions(
    "depth+"     => \$depth,
-   "filename=s" => \$filename,
+   "filename=s" => \$inputfile,
 ) or die "getopts error";
 
-open $handIn, "/usr/bin/rrdtool dump $filename |"
-   or die "could not rrddump $filename - aborting\n";
+open $handIn, "/usr/bin/rrdtool dump $inputfile |"
+   or die "could not dump $inputfile - no point in continuing\n"; # footnote 4 #
 
 $Data::Dumper::Indent = 1;
 $Data::Dumper::Maxdepth = $depth;
 
 my $xml = readline $handIn;
 my $ref = XMLin $xml, ForceArray => 1, KeyAttr => [];
+
+warn "finished reading ${inputfile}\n";
+
+$inputfile =~ s{ \.rrd $ }{}xi;
 
 my @dsnames = map {
    @{ $ARG->{ name } }
@@ -88,7 +92,7 @@ foreach( @{ $ref->{ rra } } ) {
       my %dslists;
       my $database = shift @$ARG;
       my $rows = $database->{ row };
-      my $label = sprintf 'rra:steps=%s,cf=%s', @$ARG;
+      my $label = sprintf '%s.steps=%s,cf=%s', $inputfile, @$ARG;
 
       $label =~ s{ \s+ }{}gx;
 
@@ -112,10 +116,10 @@ foreach( @{ $ref->{ rra } } ) {
       foreach( @dsnames ) {
 
          my $hand;
-         my $filename = "${label},ds=${ARG}.out";
+         my $outputfile = "${label},ds=${ARG}.rra";
 
-         unless( open $hand, ">${filename}" ) {
-            warn "unable to open $filename for writing - skipping";
+         unless( open $hand, ">${outputfile}" ) {
+            warn "unable to open $outputfile for writing - skipping";
             next;
          }
 
@@ -123,7 +127,9 @@ foreach( @{ $ref->{ rra } } ) {
             foreach @{ $dslists{ $ARG } };
 
          close $hand
-            or warn "unable to close ${filename}\n";
+            or warn "unable to close ${outputfile}\n";
+
+         warn "wrote ${outputfile}\n";
       }
    }
 }
@@ -132,8 +138,8 @@ foreach( @{ $ref->{ rra } } ) {
 
 Footnote 1:
 
-This was mostly lifted from a contributor at StackOverflow, with tweaks by me.
-In a future commit, I should replace this with proper attribution to a link.
+This function was mostly lifted from a contributor at StackOverflow
+(http://stackoverflow.com/a/2457928/2700710), with tweaks by me.
 
 Footnote 2:
 
@@ -157,6 +163,14 @@ believe it or not.
 
 But yes, the code is ugly - I make no excuses for it.
 
+Footnote 4:
+
+Yes, I'm aware there is a Perl binding for RRD, but it's horribly inadequate.
+In-particular, RRDs::dump provides no means of capturing its output, and
+pig-headedly dumps to STDOUT despite my best efforts (why bother providing a
+programmatic interface in that case).  RRDs::fetch was better, but it doesn't
+provide the guarantee of dumping the *exact* datapoints unmolested.
+
 ToDo:
 
  - bail-out if the DS is anything other than GAUGE or ABSOLUTE (ultimately, we
@@ -173,6 +187,5 @@ NaNs back into the output dataset;
    - if there are isolated NaNs in the middle of the range of valid data (or
 short runs), sample at a lower rate, perhaps at the heartbeat, or a larger
 interval;
-
 
 =cut
