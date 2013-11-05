@@ -179,8 +179,16 @@ Footnote 4:
 Yes, I'm aware there is a Perl binding for RRD, but it's horribly inadequate.
 In-particular, RRDs::dump provides no means of capturing its output, and
 pig-headedly dumps to STDOUT despite my best efforts (why bother providing a
-programmatic interface in that case).  RRDs::fetch was better, but it doesn't
-provide the guarantee of dumping the *exact* datapoints unmolested.
+programmatic interface in that case).
+
+RRDs::fetch was better, but it doesn't provide the guarantee of dumping the
+*exact* datapoints unmolested.  It takes a time range and resolution as input,
+and prints to the output the data set that is the closest fit (defaulting to
+the highest resolution between one day ago and now).
+
+Using "dump" extracts the exact data points as they are in the RRD, and frees
+us from worrying about specifying a time range (which is error prone and
+clumsy).
 
 ToDo:
 

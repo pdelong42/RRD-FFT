@@ -44,6 +44,30 @@ kind of consolidation function?  Or should it instead only be done at graphing
 time (you don't necessarily want to incur the overhead of an FFT every time a
 CF gets run, which is presumably every time there is an update to the RRD).
 
+ - I need a coherent and workable pre-processing tactic for dealing with NaNs
+in the data.  Here are some possibilities, some of which can be applied
+concurrently:
+
+   - Trim NaNs from the beginning and end of the data arrays ("leading" and
+  "trailing" NaNs), and operate on the reduced set of data containing actual
+  numbers.  (The best place to do this trimming is probably in "extract.pl".)
+
+   - For "one-off" NaNs in otherwise contiguous data arrays, it's unclear what
+  approach is the best.  One possibility is to treat each contiguous "run" of
+  data as a separate input array, and run a distinct FFT for each (this
+  segmentation is once again probably best handled in "extract.pl").
+
+   - Another possibility is to downsample the data.  But this discards up to
+  half of the data points, in the best case (only one NaN).  In less ideal
+  cases (multiple embedded NaNs which are not aligned to the same periodicity),
+  it discards perhaps more.
+
+   - For the previous case, there may be strategies for keeping data that would
+  otherwise be discarded, but it's unclear what those might be.  As previously,
+  some amount of doing transforms on separate segments of data may be
+  necessary.  And there may be a way to merge the FFTs of those segments into a
+  unified final result.
+
 Dependencies:
 
  - [RRDtool](http://www.rrdtool.org)
