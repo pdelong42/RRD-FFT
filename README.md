@@ -48,9 +48,10 @@ CF gets run, which is presumably every time there is an update to the RRD).
 in the data.  Here are some possibilities, some of which can be applied
 concurrently:
 
-   - Trim NaNs from the beginning and end of the data arrays ("leading" and
-  "trailing" NaNs), and operate on the reduced set of data containing actual
-  numbers.  (The best place to do this trimming is probably in "extract.pl".)
+   - [DONE] Trim NaNs from the beginning and end of the data arrays ("leading"
+  and "trailing" NaNs), and operate on the reduced set of data containing
+  actual numbers.  (The best place to do this trimming is probably in
+  "extract.pl".)
 
    - For "one-off" NaNs in otherwise contiguous data arrays, it's unclear what
   approach is the best.  One possibility is to treat each contiguous "run" of
