@@ -96,9 +96,6 @@ foreach( @{ $ref->{ rra } } ) {
 
       $label =~ s{ \s+ }{}gx;
 
-      push( @{ $dslists{ $ARG } }, scalar( @$rows ), 1 )
-         foreach @dsnames; # footnote 2 #
-
       foreach( @$rows ) {
 
          my @tmplist = @dsnames;
@@ -117,6 +114,20 @@ foreach( @{ $ref->{ rra } } ) {
 
          my $hand;
          my $outputfile = "${label},ds=${ARG}.rra";
+         my $dslistref = $dslists{ $ARG };
+
+         my $fullsize = scalar @$dslistref;
+
+         shift @$dslistref
+            while( $dslistref->[0] eq 'NaN' );
+
+         pop @$dslistref
+            while( $dslistref->[-1] eq 'NaN' );
+
+         my $trimmed = scalar @$dslistref;
+
+         unshift @$dslistref, $trimmed, 1; # footnote 2 #
+         push @$dslistref, $fullsize;
 
          unless( open $hand, ">${outputfile}" ) {
             warn "unable to open $outputfile for writing - skipping";
@@ -124,7 +135,7 @@ foreach( @{ $ref->{ rra } } ) {
          }
 
          print $hand "$ARG\n"
-            foreach @{ $dslists{ $ARG } };
+            foreach @$dslistref;
 
          close $hand
             or warn "unable to close ${outputfile}\n";
@@ -176,7 +187,7 @@ ToDo:
  - bail-out if the DS is anything other than GAUGE or ABSOLUTE (ultimately, we
 want to handle DERIVE and COUNTER types as well, but not yet);
 
- - weed-out NANs at this stage, and update the row count accordingly (with
+ - weed-out NaNs at this stage, and update the row count accordingly (with
 maybe an optional field specifing what the row count would have been) - some
 approaches to consider:
 
