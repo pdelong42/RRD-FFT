@@ -23,6 +23,9 @@ ToDo:
  - Make this more useful and usable beyond the proof-of-concept phase.
  - Figure-out how to handle NANs - it takes only one for an FFT to be useless.
  - Handle COUNTER and DERIVE types, not just GAUGE and ABSOLUTE.
+ - Provide a way to conveniently produce graphical output.  Currently, the
+   output data can be fed into gnuplot, but this is not convenient for most of
+   the people who are envisioned to be the ultimate end-users for this.
 
 Idea scratchpad:
 
@@ -56,7 +59,9 @@ concurrently:
    - For "one-off" NaNs in otherwise contiguous data arrays, it's unclear what
   approach is the best.  One possibility is to treat each contiguous "run" of
   data as a separate input array, and run a distinct FFT for each (this
-  segmentation is once again probably best handled in "extract.pl").
+  segmentation is once again probably best handled in "extract.pl").  However,
+  it's not clear how to combine these fragmented result sets back into a single
+  coherent result.
 
    - Another possibility is to downsample the data.  But this discards up to
   half of the data points, in the best case (only one NaN).  In less ideal
@@ -68,6 +73,22 @@ concurrently:
   some amount of doing transforms on separate segments of data may be
   necessary.  And there may be a way to merge the FFTs of those segments into a
   unified final result.
+
+   - Rather than doing a patchwork of transforms, or discarding data, we can
+  pad the missing data.  This is non-ideal, because it is essentially the
+  fabrication of data, which is not cool, and can lead to misleading results.
+  Nonetheless, some possibilities are: use zeros for missing data; use a linear
+  fit between the two datapoints that exist on either side; use a least-squares
+  fit.
+
+  - Simply discarding missing datapoints from the input stream (as though they
+  were never there) is not an option, because the transform assumes a certain
+  sampling rate.  Skipping points essentially breaks that assumption, and could
+  result in meaningless output data (how would you interpret it?).  If you're
+  going to discard missing data points, then you also need to preserve all
+  other data points at that interval, to keep a consistent sampling rate
+  (albeit, one that is now at-least half of the original).  This is the
+  downsampling possibility mentioned earlier.
 
 Dependencies:
 
